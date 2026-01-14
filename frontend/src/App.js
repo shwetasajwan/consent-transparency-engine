@@ -40,54 +40,119 @@ function App() {
   };
 
   return (
-    <div style={{ padding: 40, fontFamily: "Arial", maxWidth: 800 }}>
-      <h2>Consent Transparency Engine</h2>
-      <p>Analyze what you actually consented to.</p>
-
-      {/* Policy Input */}
-      <label><strong>Paste Privacy Policy / Consent Text</strong></label>
-      <textarea
-        rows="10"
-        style={{ width: "100%", fontSize: 14 }}
-        placeholder="Paste a privacy policy or consent agreement here..."
-        value={policyText}
-        onChange={(e) => setPolicyText(e.target.value)}
-      />
-
-      <button
-        style={{ marginTop: 16 }}
-        onClick={analyzeConsent}
-        disabled={!policyText || loading}
+    <div
+      style={{
+        minHeight: "100vh",
+        backgroundColor: "#f7f9fc",
+        padding: "40px 20px",
+        fontFamily: "Inter, Arial, sans-serif",
+        display: "flex",
+        justifyContent: "center"
+      }}
+    >
+      <div
+        style={{
+          width: "100%",
+          maxWidth: 900,
+          backgroundColor: "#ffffff",
+          padding: 32,
+          borderRadius: 8,
+          boxShadow: "0 4px 12px rgba(0,0,0,0.05)"
+        }}
       >
-        {loading ? "Analyzing..." : "Analyze Agreement"}
-      </button>
+        {/* Header */}
+        <h2 style={{ marginBottom: 8 }}>Consent Transparency Engine</h2>
+        <p style={{ color: "#555", marginBottom: 24 }}>
+          Paste a consent or privacy agreement to understand what you are actually agreeing to.
+        </p>
 
-      {/* Result */}
-      {result && (
-        <div style={{ marginTop: 30, border: "1px solid #ddd", padding: 20 }}>
-          <h3>{result.app}</h3>
+        {/* Input */}
+        <label style={{ fontWeight: 600 }}>
+          Privacy Policy / Consent Agreement
+        </label>
+        <textarea
+          rows="10"
+          style={{
+            width: "100%",
+            marginTop: 8,
+            padding: 12,
+            fontSize: 14,
+            borderRadius: 6,
+            border: "1px solid #ccc",
+            resize: "vertical"
+          }}
+          placeholder="Paste the full agreement text here..."
+          value={policyText}
+          onChange={(e) => setPolicyText(e.target.value)}
+        />
 
-          <p><strong>Summary</strong></p>
-          <p>{result.plain_english_summary}</p>
+        {/* Button */}
+        <button
+          onClick={analyzeConsent}
+          disabled={!policyText || loading}
+          style={{
+            marginTop: 16,
+            padding: "10px 20px",
+            backgroundColor: loading ? "#999" : "#2563eb",
+            color: "#fff",
+            border: "none",
+            borderRadius: 6,
+            cursor: loading ? "not-allowed" : "pointer",
+            fontSize: 14
+          }}
+        >
+          {loading ? "Analyzing Agreement..." : "Analyze Agreement"}
+        </button>
 
-          <p>
-            <strong>Risk Level:</strong>{" "}
-            <span style={{ color: riskColor(result.risk_level) }}>
-              {result.risk_level}
-            </span>{" "}
-            ({result.risk_score})
-          </p>
+        {/* Result */}
+        {result && (
+          <div
+            style={{
+              marginTop: 32,
+              padding: 24,
+              borderRadius: 8,
+              border: "1px solid #e5e7eb",
+              backgroundColor: "#fafafa"
+            }}
+          >
+            <h3 style={{ marginBottom: 12 }}>{result.app}</h3>
 
-          <p><strong>Why this matters:</strong></p>
-          <ul>
-            {result.why_it_matters.map((r, i) => (
-              <li key={i}>{r}</li>
-            ))}
-          </ul>
-        </div>
-      )}
+            <div style={{ marginBottom: 16 }}>
+              <strong>Plain-English Summary</strong>
+              <p style={{ marginTop: 6 }}>
+                {result.plain_english_summary}
+              </p>
+            </div>
+
+            <div style={{ marginBottom: 16 }}>
+              <strong>Risk Assessment</strong>
+              <p style={{ marginTop: 6 }}>
+                <span
+                  style={{
+                    color: riskColor(result.risk_level),
+                    fontWeight: 600
+                  }}
+                >
+                  {result.risk_level}
+                </span>{" "}
+                risk ({result.risk_score})
+              </p>
+            </div>
+
+            <div>
+              <strong>Why this matters</strong>
+              <ul style={{ marginTop: 6 }}>
+                {result.why_it_matters.map((r, i) => (
+                  <li key={i}>{r.replaceAll("_", " ")}</li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   );
+
 }
 
 export default App;
